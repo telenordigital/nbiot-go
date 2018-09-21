@@ -14,7 +14,7 @@ import (
 const (
 	// DefaultAddr is the default address of the Horde API. You normally won't
 	// have to change this.
-	DefaultAddr = "https://api.nbiot.engineering"
+	DefaultAddr = "https://api.nbiot.telenor.io"
 
 	// ConfigFile is the name for the config file. The configuration file is a
 	// plain text file that contains the Horde configuration.
