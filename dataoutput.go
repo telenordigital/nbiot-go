@@ -10,7 +10,7 @@ import (
 type OutputDataMessage struct {
 	Device   Device `json:"device"`
 	Payload  []byte `json:"payload"`
-	Received uint32 `json:"received"`
+	Received int64  `json:"received"`
 }
 
 // CollectionOutput calls handler in its own goroutine for each device message received.
