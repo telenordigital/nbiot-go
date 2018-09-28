@@ -1,4 +1,4 @@
-package horde
+package nbiot
 
 import (
 	"bufio"
@@ -12,25 +12,25 @@ import (
 )
 
 const (
-	// DefaultAddr is the default address of the Horde API. You normally won't
+	// DefaultAddr is the default address of the Telenor NB-IoT API. You normally won't
 	// have to change this.
 	DefaultAddr = "https://api.nbiot.telenor.io"
 
 	// ConfigFile is the name for the config file. The configuration file is a
-	// plain text file that contains the Horde configuration.
+	// plain text file that contains the Telenor NB-IoT configuration.
 	// The configuration file is expected to be in the current home directory
 	// and contain a "address=<value>" line and/or a "token=<value>" line.
-	ConfigFile = ".horde"
+	ConfigFile = ".telenor-nbiot"
 
 	// AddressEnvironmentVariable is the name of the environment variable that
 	// can be used to override the address set in the configuration file.
 	// If the  environment variable isn't set (or is empty) the configuration
 	// file settings will be used.
-	AddressEnvironmentVariable = "HORDE_ADDRESS"
+	AddressEnvironmentVariable = "TELENOR_NBIOT_ADDRESS"
 
 	// TokenEnvironmentVariable is the name of the environment variable that
 	// can be used to override the token set in the configuration file.
-	TokenEnvironmentVariable = "HORDE_TOKEN"
+	TokenEnvironmentVariable = "TELENOR_NBIOT_TOKEN"
 )
 
 // These are the configuration file directives.
@@ -91,7 +91,6 @@ func readConfig(filename string) (string, string, error) {
 		words := strings.Split(scanner.Text(), "=")
 		if len(words) != 2 {
 			return "", "", fmt.Errorf("Not a key value expression on line %d in %s: %s\n", lineno, filename, scanner.Text())
-			continue
 		}
 		switch words[0] {
 		case addressKey:

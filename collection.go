@@ -1,4 +1,4 @@
-package horde
+package nbiot
 
 // Collection represents a collection.
 type Collection struct {

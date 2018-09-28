@@ -1,4 +1,4 @@
-package horde
+package nbiot
 
 import (
 	"io/ioutil"
@@ -9,7 +9,7 @@ import (
 func TestFileDefaultConfig(t *testing.T) {
 
 	contents := "address=http://example.com\ntoken=sometoken"
-	tempFile := "horde.testconfig"
+	tempFile := "telenor-nbiot.testconfig"
 	ioutil.WriteFile(getFullPath(tempFile), []byte(contents), 0666)
 	defer os.Remove(getFullPath(tempFile))
 

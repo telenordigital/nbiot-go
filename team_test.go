@@ -1,4 +1,4 @@
-package horde
+package nbiot
 
 import (
 	"net/http"
@@ -18,9 +18,6 @@ func TestTeam(t *testing.T) {
 	if len(teams) != 1 {
 		t.Fatalf("expected one team, got %#v", teams)
 	}
-	// if len(teams[0].Members) != 1 {
-	// 	t.Fatalf("expected one team member, got %#v", teams[0].Members)
-	// }
 
 	team, err := client.CreateTeam(Team{})
 	if err != nil {

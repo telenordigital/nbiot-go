@@ -1,9 +1,9 @@
 /*
-Package horde-go provides a client for the REST API for Horde, which is Telenor's NB-IoT-as-a-Service.
+Package nbiot-go provides a client for the REST API for Telenor NB-IoT.
 
 All Create* and Update* methods return the created and updated entity, respectively, which may include setting or updating fields.
 */
-package horde
+package nbiot
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"net/http"
 )
 
-// Client is a client for Horde.
+// Client is a client for Telenor NB-IoT.
 type Client struct {
 	addr   string
 	token  string

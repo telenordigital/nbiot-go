@@ -1,4 +1,4 @@
-package horde
+package nbiot
 
 // Team represents a team.
 type Team struct {
