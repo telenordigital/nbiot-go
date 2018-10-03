@@ -13,22 +13,18 @@ type OutputDataMessage struct {
 	Received int64  `json:"received"`
 }
 
-// CollectionOutput calls handler in its own goroutine for each device message received.
-// It blocks until an error occurs, including EOF when the connection is closed.
-func (c *Client) CollectionOutput(collectionID string, handler func(OutputDataMessage)) error {
-	return c.output(fmt.Sprintf("/collections/%s", collectionID), handler)
+func (c *Client) CollectionOutput(collectionID string) (*OutputStream, error) {
+	return c.output(fmt.Sprintf("/collections/%s", collectionID))
 }
 
-// DeviceOutput calls handler in its own goroutine for each device message received.
-// It blocks until an error occurs, including EOF when the connection is closed.
-func (c *Client) DeviceOutput(collectionID, deviceID string, handler func(OutputDataMessage)) error {
-	return c.output(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID), handler)
+func (c *Client) DeviceOutput(collectionID, deviceID string) (*OutputStream, error) {
+	return c.output(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID))
 }
 
-func (c *Client) output(path string, handler func(OutputDataMessage)) error {
+func (c *Client) output(path string) (*OutputStream, error) {
 	url, err := url.Parse(c.addr)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	scheme := "wss"
@@ -38,30 +34,39 @@ func (c *Client) output(path string, handler func(OutputDataMessage)) error {
 
 	wscfg, err := websocket.NewConfig(fmt.Sprintf("%s://%s%s/from", scheme, url.Host, path), "http://example.com")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	wscfg.Header.Set("X-API-Token", c.token)
 
 	ws, err := websocket.DialConfig(wscfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer ws.Close()
 
+	return &OutputStream{ws}, nil
+}
+
+type OutputStream struct {
+	ws *websocket.Conn
+}
+
+func (s *OutputStream) Recv() (OutputDataMessage, error) {
 	for {
 		var msg struct {
-			KeepAlive bool `json:"keepAlive"`
+			Type string `json:"type"`
 			OutputDataMessage
 		}
-		err := websocket.JSON.Receive(ws, &msg)
+		err := websocket.JSON.Receive(s.ws, &msg)
 		if err != nil {
-			return err
+			return OutputDataMessage{}, err
 		}
 
-		if msg.KeepAlive {
-			continue
+		if msg.Type == "data" {
+			return msg.OutputDataMessage, nil
 		}
-
-		go handler(msg.OutputDataMessage)
 	}
+}
+
+func (s *OutputStream) Close() {
+	s.ws.Close()
 }
