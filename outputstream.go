@@ -7,21 +7,25 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+type OutputStream struct {
+	ws *websocket.Conn
+}
+
 type OutputDataMessage struct {
 	Device   Device `json:"device"`
 	Payload  []byte `json:"payload"`
 	Received int64  `json:"received"`
 }
 
-func (c *Client) CollectionOutput(collectionID string) (*OutputStream, error) {
-	return c.output(fmt.Sprintf("/collections/%s", collectionID))
+func (c *Client) CollectionOutputStream(collectionID string) (*OutputStream, error) {
+	return c.outputStream(fmt.Sprintf("/collections/%s", collectionID))
 }
 
-func (c *Client) DeviceOutput(collectionID, deviceID string) (*OutputStream, error) {
-	return c.output(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID))
+func (c *Client) DeviceOutputStream(collectionID, deviceID string) (*OutputStream, error) {
+	return c.outputStream(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID))
 }
 
-func (c *Client) output(path string) (*OutputStream, error) {
+func (c *Client) outputStream(path string) (*OutputStream, error) {
 	url, err := url.Parse(c.addr)
 	if err != nil {
 		return nil, err
@@ -44,10 +48,6 @@ func (c *Client) output(path string) (*OutputStream, error) {
 	}
 
 	return &OutputStream{ws}, nil
-}
-
-type OutputStream struct {
-	ws *websocket.Conn
 }
 
 func (s *OutputStream) Recv() (OutputDataMessage, error) {
