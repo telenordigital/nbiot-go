@@ -2,9 +2,10 @@ package nbiot
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
 type OutputStream struct {
@@ -36,13 +37,13 @@ func (c *Client) outputStream(path string) (*OutputStream, error) {
 		scheme = "ws"
 	}
 
-	wscfg, err := websocket.NewConfig(fmt.Sprintf("%s://%s%s/from", scheme, url.Host, path), "http://example.com")
-	if err != nil {
-		return nil, err
-	}
-	wscfg.Header.Set("X-API-Token", c.token)
+	urlStr := fmt.Sprintf("%s://%s%s/from", scheme, url.Host, path)
 
-	ws, err := websocket.DialConfig(wscfg)
+	header := http.Header{}
+	header.Add("X-API-Token", c.token)
+
+	dialer := websocket.Dialer{}
+	ws, _, err := dialer.Dial(urlStr, header)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func (s *OutputStream) Recv() (OutputDataMessage, error) {
 			Type string `json:"type"`
 			OutputDataMessage
 		}
-		err := websocket.JSON.Receive(s.ws, &msg)
+		err := s.ws.ReadJSON(&msg)
 		if err != nil {
 			return OutputDataMessage{}, err
 		}
