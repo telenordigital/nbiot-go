@@ -11,14 +11,6 @@ func TestTeam(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	teams, err := client.Teams()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(teams) != 1 {
-		t.Fatalf("expected one team, got %#v", teams)
-	}
-
 	team, err := client.CreateTeam(Team{})
 	if err != nil {
 		t.Fatal(err)
@@ -36,7 +28,7 @@ func TestTeam(t *testing.T) {
 		t.Fatal("unexpected tags:", team.Tags)
 	}
 
-	teams, err = client.Teams()
+	teams, err := client.Teams()
 	if err != nil {
 		t.Fatal(err)
 	}

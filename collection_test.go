@@ -11,14 +11,6 @@ func TestCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	collections, err := client.Collections()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(collections) != 1 {
-		t.Fatalf("expected one collection, got %#v", collections)
-	}
-
 	collection, err := client.CreateCollection(Collection{})
 	if err != nil {
 		t.Fatal(err)
@@ -36,7 +28,7 @@ func TestCollection(t *testing.T) {
 		t.Fatal("unexpected tags:", collection.Tags)
 	}
 
-	collections, err = client.Collections()
+	collections, err := client.Collections()
 	if err != nil {
 		t.Fatal(err)
 	}
