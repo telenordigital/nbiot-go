@@ -9,8 +9,13 @@ type Team struct {
 
 // Member is the member element of the Team type
 type Member struct {
-	UserID *string `json:"userId"`
-	Role   *string `json:"role"`
+	UserID        *string `json:"userId"`
+	Role          *string `json:"role"`
+	Email         *string `json:"email"`
+	Phone         *string `json:"phone"`
+	VerifiedEmail *bool   `json:"verifiedEmail"`
+	VerifiedPhone *bool   `json:"verifiedPhone"`
+	ConnectID     *string `json:"connectId"`
 }
 
 // Team gets a team.
