@@ -36,6 +36,13 @@ type IFTTTOutput struct {
 	AsIsPayload  bool
 }
 
+type UDPOutput struct {
+	ID           string
+	CollectionID string
+	Host         string
+	Port         int
+}
+
 // Output retrieves an output
 func (c *Client) Output(collectionID, outputID string) (Output, error) {
 	var output output
@@ -138,6 +145,19 @@ func (o IFTTTOutput) toOutput() output {
 	}
 }
 
+func (o UDPOutput) toOutput() output {
+	typ := "udp"
+	return output{
+		ID:           &o.ID,
+		CollectionID: &o.CollectionID,
+		Type:         &typ,
+		Config: map[string]interface{}{
+			"host": o.Host,
+			"port": o.Port,
+		},
+	}
+}
+
 type output struct {
 	ID           *string                `json:"outputId"`
 	CollectionID *string                `json:"collectionId"`
@@ -176,6 +196,13 @@ func (o *output) toOutput() (Output, error) {
 			EventName:    o.str("eventName"),
 			AsIsPayload:  o.bool("asIsPayload"),
 		}, nil
+	case "udp":
+		return UDPOutput{
+			ID:           *o.ID,
+			CollectionID: *o.CollectionID,
+			Host:         o.str("host"),
+			Port:         o.int("port"),
+		}, nil
 	}
 	return nil, fmt.Errorf("unknown output type %q", *o.Type)
 }
@@ -188,4 +215,9 @@ func (o *output) str(name string) string {
 func (o *output) bool(name string) bool {
 	b, _ := o.Config[name].(bool)
 	return b
+}
+
+func (o *output) int(name string) int {
+	b, _ := o.Config[name].(float64)
+	return int(b)
 }
