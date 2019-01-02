@@ -1,10 +1,20 @@
 package nbiot
 
+import "fmt"
+
 // Collection represents a collection.
 type Collection struct {
 	CollectionID string            `json:"collectionId"`
 	TeamID       *string           `json:"teamId"`
 	Tags         map[string]string `json:"tags,omitempty"`
+}
+
+// Datapoint represents a data point in a collection
+type Datapoint struct {
+	Type     string `json:"type"`
+	Device   Device `json:"device"`
+	Payload  []byte `json:"payload"`
+	Received int64  `json:"received"`
 }
 
 // Collection gets a collection.
@@ -38,4 +48,13 @@ func (c *Client) UpdateCollection(collection Collection) (Collection, error) {
 // DeleteCollection deletes a collection.
 func (c *Client) DeleteCollection(id string) error {
 	return c.delete("/collections/" + id)
+}
+
+// Data returns all the stored data for the collection
+func (c *Client) Data(collectionID string) ([]Datapoint, error) {
+	var data struct {
+		Datapoints []Datapoint `json:"messages"`
+	}
+	err := c.get(fmt.Sprintf("/collections/%s/data", collectionID), &data)
+	return data.Datapoints, err
 }
