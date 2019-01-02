@@ -51,10 +51,10 @@ func (c *Client) DeleteCollection(id string) error {
 }
 
 // Data returns all the stored data for the collection
-func (c *Client) Data(collectionID string) ([]Datapoint, error) {
+func (c *Client) Data(collectionID string, since int64, until int64, limit int) ([]Datapoint, error) {
 	var data struct {
 		Datapoints []Datapoint `json:"messages"`
 	}
-	err := c.get(fmt.Sprintf("/collections/%s/data", collectionID), &data)
+	err := c.get(fmt.Sprintf("/collections/%s/data?since=%d&until=%d&limit=%d", collectionID, since, until, limit), &data)
 	return data.Datapoints, err
 }

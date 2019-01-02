@@ -47,7 +47,7 @@ func TestCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data, err := client.Data(collection.CollectionID)
+	data, err := client.Data(collection.CollectionID, 0, 0, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
