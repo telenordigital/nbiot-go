@@ -47,6 +47,14 @@ func TestCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	data, err := client.Data(collection.CollectionID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(data) != 0 {
+		t.Fatalf("collection %v should be empty, has %d elements", collection.CollectionID, len(data))
+	}
+
 	if err := client.DeleteCollection(collection.CollectionID); err != nil {
 		t.Fatal(err)
 	}
@@ -54,4 +62,5 @@ func TestCollection(t *testing.T) {
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}
+
 }
