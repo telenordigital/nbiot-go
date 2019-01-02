@@ -42,7 +42,7 @@ const (
 // Return both address and token from configuration file. The file name is
 // for testing purposes; use the ConfigFile constant when calling the functino.
 func addressTokenFromConfig(filename string) (string, string, error) {
-	address, token, err := readConfig(getFullPath(filename))
+	address, token, err := readConfig(getFirstMatchingPath(filename))
 	if err != nil {
 		return "", "", err
 	}
@@ -60,12 +60,34 @@ func addressTokenFromConfig(filename string) (string, string, error) {
 	return address, token, nil
 }
 
-func getFullPath(filename string) string {
+// getFirstMatchingPath traverses the directories from the current
+// working directory to the home directory looking for the config
+// file.  It will return the path of the first file encountered.
+func getFirstMatchingPath(filename string) string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+
 	usr, err := user.Current()
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(usr.HomeDir, filename)
+
+	numHomepathParts := len(strings.Split(usr.HomeDir, string(os.PathSeparator)))
+	cwdParts := strings.Split(dir, string(os.PathSeparator))
+
+	for i := len(cwdParts); i >= numHomepathParts; i-- {
+		s := strings.Join(cwdParts[:i], string(os.PathSeparator))
+		f := filepath.Join(s, filename)
+
+		if _, err := os.Stat(f); os.IsNotExist(err) {
+			continue
+		}
+		return f
+	}
+
+	return ""
 }
 
 // readConfig reads the config file and returns the address and token
