@@ -1,6 +1,9 @@
 package nbiot
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // Collection represents a collection.
 type Collection struct {
@@ -51,10 +54,21 @@ func (c *Client) DeleteCollection(id string) error {
 }
 
 // Data returns all the stored data for the collection
-func (c *Client) Data(collectionID string, since int64, until int64, limit int) ([]Datapoint, error) {
+func (c *Client) Data(collectionID string, since time.Time, until time.Time, limit int) ([]Datapoint, error) {
 	var data struct {
 		Datapoints []Datapoint `json:"messages"`
 	}
-	err := c.get(fmt.Sprintf("/collections/%s/data?since=%d&until=%d&limit=%d", collectionID, since, until, limit), &data)
+
+	var s, u int64
+
+	if !since.IsZero() {
+		s = since.UnixNano() / int64(time.Millisecond)
+	}
+
+	if !until.IsZero() {
+		u = until.UnixNano() / int64(time.Millisecond)
+	}
+
+	err := c.get(fmt.Sprintf("/collections/%s/data?since=%d&until=%d&limit=%d", collectionID, s, u, limit), &data)
 	return data.Datapoints, err
 }

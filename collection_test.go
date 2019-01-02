@@ -3,6 +3,7 @@ package nbiot
 import (
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestCollection(t *testing.T) {
@@ -47,7 +48,7 @@ func TestCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data, err := client.Data(collection.CollectionID, 0, 0, 0)
+	data, err := client.Data(collection.CollectionID, time.Time{}, time.Time{}, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
