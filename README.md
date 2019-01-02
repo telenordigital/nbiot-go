@@ -5,9 +5,11 @@ NBIoT-Go provides a Go client for the [REST API](https://api.nbiot.telenor.io) f
 
 ## Configuration
 
-The configuration file is located at `${HOME}/.telenor-nbiot`. The file is a simple
-list of key/value pairs. Additional values are ignored. Comments must start
-with a `#`:
+The configuration file is usually located at `${HOME}/.telenor-nbiot`,
+but the library will start at the current directory and scan each
+parent directory until it finds a config file. The file is a simple
+list of key/value pairs. Additional values are ignored. Comments must
+start with a `#`:
 
     #
     # This is the URL of the Telenor NB-IoT REST API. The default value is
