@@ -112,7 +112,11 @@ func newClientError(resp *http.Response) ClientError {
 	if err != nil {
 		return ClientError{resp.StatusCode, err.Error()}
 	}
-	return ClientError{resp.StatusCode, string(buf)}
+	msg := string(buf)
+	if resp.StatusCode == http.StatusUnauthorized {
+		msg = "The token you provided (or forget to provide) does not allow access to the requested resource."
+	}
+	return ClientError{resp.StatusCode, msg}
 }
 
 func (e ClientError) Error() string {
