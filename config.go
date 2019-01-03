@@ -71,9 +71,8 @@ func getFirstMatchingPath(filename string) string {
 	cwdParts := strings.Split(dir, string(os.PathSeparator))
 
 	for i := len(cwdParts); i >= 1; i-- {
-		s := strings.Join(cwdParts[:i], string(os.PathSeparator)) + "/"
+		s := strings.Join(cwdParts[:i], string(os.PathSeparator)) + string(os.PathSeparator)
 		f := filepath.Join(s, filename)
-
 		if _, err := os.Stat(f); os.IsNotExist(err) {
 			continue
 		}
