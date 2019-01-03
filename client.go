@@ -28,6 +28,15 @@ func New() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if address == "" {
+		return nil, fmt.Errorf("No API address. Define %s environment variable or create config in %s", AddressEnvironmentVariable, ConfigFile)
+	}
+
+	if token == "" {
+		return nil, fmt.Errorf("No API token. Define %s environment variable or create config in %s", TokenEnvironmentVariable, ConfigFile)
+	}
+
 	return NewWithAddr(address, token)
 }
 
@@ -112,11 +121,7 @@ func newClientError(resp *http.Response) ClientError {
 	if err != nil {
 		return ClientError{resp.StatusCode, err.Error()}
 	}
-	msg := string(buf)
-	if resp.StatusCode == http.StatusUnauthorized {
-		msg = "The token you provided (or forget to provide) does not allow access to the requested resource."
-	}
-	return ClientError{resp.StatusCode, msg}
+	return ClientError{resp.StatusCode, string(buf)}
 }
 
 func (e ClientError) Error() string {

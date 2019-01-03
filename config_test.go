@@ -3,15 +3,26 @@ package nbiot
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
+func TestFirstMatchingPath(t *testing.T) {
+	getFirstMatchingPath(".telenor-nbiot")
+}
+
 func TestFileDefaultConfig(t *testing.T) {
 
-	contents := "address=http://example.com\ntoken=sometoken"
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	contents := "address=http://example.com\ntoken=sometoken\n"
 	tempFile := "telenor-nbiot.testconfig"
-	ioutil.WriteFile(getFullPath(tempFile), []byte(contents), 0666)
-	defer os.Remove(getFullPath(tempFile))
+	tempPath := filepath.Join(cwd, "telenor-nbiot.testconfig")
+
+	ioutil.WriteFile(tempPath, []byte(contents), 0666)
+	defer os.Remove(tempPath)
 
 	// unset the environment first to make sure it won't interfere with the
 	// file. It might contain settings that is in use so set it back to the
@@ -35,7 +46,7 @@ func TestFileDefaultConfig(t *testing.T) {
 	}
 
 	contents = "token=foobar\nsome=thing\nother=thing\n\nsome=thing=other\n\n"
-	ioutil.WriteFile(getFullPath(tempFile), []byte(contents), 0666)
+	ioutil.WriteFile(getFirstMatchingPath(tempFile), []byte(contents), 0666)
 	_, _, err = addressTokenFromConfig(tempFile)
 	if err == nil {
 		t.Fatal("expected error")
