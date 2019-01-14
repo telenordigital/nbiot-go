@@ -1,4 +1,6 @@
-# nbiot-go [![GoDoc](https://godoc.org/github.com/telenordigital/nbiot-go?status.svg)](https://godoc.org/github.com/telenordigital/nbiot-go)
+# nbiot-go
+[![GoDoc](https://godoc.org/github.com/telenordigital/nbiot-go?status.svg)](https://godoc.org/github.com/telenordigital/nbiot-go)
+[![Travis-CI](https://api.travis-ci.com/telenordigital/nbiot-go.svg)](https://travis-ci.com/telenordigital/nbiot-go)
 
 NBIoT-Go provides a Go client for the [REST API](https://api.nbiot.telenor.io) for
 [Telenor NB-IoT](https://nbiot.engineering).
