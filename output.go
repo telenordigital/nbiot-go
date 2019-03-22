@@ -7,6 +7,7 @@ import "fmt"
 type Output interface {
 	GetID() string
 	GetCollectionID() string
+	IsDisabled() bool
 	GetTags() map[string]string
 
 	toOutput() output
@@ -21,6 +22,7 @@ type WebHookOutput struct {
 	BasicAuthPass     string
 	CustomHeaderName  string
 	CustomHeaderValue string
+	Disabled          bool
 	Tags              map[string]string
 }
 
@@ -34,6 +36,7 @@ type MQTTOutput struct {
 	Password         string
 	ClientID         string
 	TopicName        string
+	Disabled         bool
 	Tags             map[string]string
 }
 
@@ -44,6 +47,7 @@ type IFTTTOutput struct {
 	Key          string
 	EventName    string
 	AsIsPayload  bool
+	Disabled     bool
 	Tags         map[string]string
 }
 
@@ -53,6 +57,7 @@ type UDPOutput struct {
 	CollectionID string
 	Host         string
 	Port         int
+	Disabled     bool
 	Tags         map[string]string
 }
 
@@ -135,6 +140,18 @@ func (o IFTTTOutput) GetCollectionID() string { return o.CollectionID }
 // GetCollectionID returns the collection ID.
 func (o UDPOutput) GetCollectionID() string { return o.CollectionID }
 
+// IsDisabled returns whether the output is disabled.
+func (o WebHookOutput) IsDisabled() bool { return o.Disabled }
+
+// IsDisabled returns whether the output is disabled.
+func (o MQTTOutput) IsDisabled() bool { return o.Disabled }
+
+// IsDisabled returns whether the output is disabled.
+func (o IFTTTOutput) IsDisabled() bool { return o.Disabled }
+
+// IsDisabled returns whether the output is disabled.
+func (o UDPOutput) IsDisabled() bool { return o.Disabled }
+
 // GetTags returns the output's tags.
 func (o WebHookOutput) GetTags() map[string]string { return o.Tags }
 
@@ -149,6 +166,7 @@ func (o UDPOutput) GetTags() map[string]string { return o.Tags }
 
 func (o WebHookOutput) toOutput() output {
 	typ := "webhook"
+	enabled := !o.Disabled
 	return output{
 		ID:           &o.ID,
 		CollectionID: &o.CollectionID,
@@ -160,12 +178,14 @@ func (o WebHookOutput) toOutput() output {
 			"customHeaderName":  o.CustomHeaderName,
 			"customHeaderValue": o.CustomHeaderValue,
 		},
-		Tags: o.Tags,
+		Enabled: &enabled,
+		Tags:    o.Tags,
 	}
 }
 
 func (o MQTTOutput) toOutput() output {
 	typ := "mqtt"
+	enabled := !o.Disabled
 	return output{
 		ID:           &o.ID,
 		CollectionID: &o.CollectionID,
@@ -178,12 +198,14 @@ func (o MQTTOutput) toOutput() output {
 			"clientId":         o.ClientID,
 			"topicName":        o.TopicName,
 		},
-		Tags: o.Tags,
+		Enabled: &enabled,
+		Tags:    o.Tags,
 	}
 }
 
 func (o IFTTTOutput) toOutput() output {
 	typ := "ifttt"
+	enabled := !o.Disabled
 	return output{
 		ID:           &o.ID,
 		CollectionID: &o.CollectionID,
@@ -193,12 +215,14 @@ func (o IFTTTOutput) toOutput() output {
 			"eventName":   o.EventName,
 			"asIsPayload": o.AsIsPayload,
 		},
-		Tags: o.Tags,
+		Enabled: &enabled,
+		Tags:    o.Tags,
 	}
 }
 
 func (o UDPOutput) toOutput() output {
 	typ := "udp"
+	enabled := !o.Disabled
 	return output{
 		ID:           &o.ID,
 		CollectionID: &o.CollectionID,
@@ -207,7 +231,8 @@ func (o UDPOutput) toOutput() output {
 			"host": o.Host,
 			"port": o.Port,
 		},
-		Tags: o.Tags,
+		Enabled: &enabled,
+		Tags:    o.Tags,
 	}
 }
 
@@ -216,6 +241,7 @@ type output struct {
 	CollectionID *string                `json:"collectionId"`
 	Type         *string                `json:"type"`
 	Config       map[string]interface{} `json:"config"`
+	Enabled      *bool                  `json:"enabled"`
 	Tags         map[string]string      `json:"tags,omitempty"`
 }
 
@@ -230,6 +256,7 @@ func (o *output) toOutput() (Output, error) {
 			BasicAuthPass:     o.str("basicAuthPass"),
 			CustomHeaderName:  o.str("customHeaderName"),
 			CustomHeaderValue: o.str("customHeaderValue"),
+			Disabled:          !*o.Enabled,
 			Tags:              o.Tags,
 		}, nil
 	case "mqtt":
@@ -242,6 +269,7 @@ func (o *output) toOutput() (Output, error) {
 			Password:         o.str("password"),
 			ClientID:         o.str("clientId"),
 			TopicName:        o.str("topicName"),
+			Disabled:         !*o.Enabled,
 			Tags:             o.Tags,
 		}, nil
 	case "ifttt":
@@ -251,6 +279,7 @@ func (o *output) toOutput() (Output, error) {
 			Key:          o.str("key"),
 			EventName:    o.str("eventName"),
 			AsIsPayload:  o.bool("asIsPayload"),
+			Disabled:     !*o.Enabled,
 			Tags:         o.Tags,
 		}, nil
 	case "udp":
@@ -259,6 +288,7 @@ func (o *output) toOutput() (Output, error) {
 			CollectionID: *o.CollectionID,
 			Host:         o.str("host"),
 			Port:         o.int("port"),
+			Disabled:     !*o.Enabled,
 			Tags:         o.Tags,
 		}, nil
 	}
