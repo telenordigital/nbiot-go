@@ -11,11 +11,15 @@ type Team struct {
 type Member struct {
 	UserID        *string `json:"userId"`
 	Role          *string `json:"role"`
+	Name          *string `json:"name"`
 	Email         *string `json:"email"`
 	Phone         *string `json:"phone"`
 	VerifiedEmail *bool   `json:"verifiedEmail"`
 	VerifiedPhone *bool   `json:"verifiedPhone"`
 	ConnectID     *string `json:"connectId"`
+	GitHubLogin   *string `json:"gitHubLogin"`
+	AuthType      *string `json:"authType"`
+	AvatarURL     *string `json:"avatarUrl"`
 }
 
 // Team gets a team.
