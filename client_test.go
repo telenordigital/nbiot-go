@@ -22,13 +22,13 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestSystemConfig(t *testing.T) {
+func TestSystemDefaults(t *testing.T) {
 	client, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = client.SystemConfig()
+	_, err = client.SystemDefaults()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -54,15 +54,15 @@ func (c *Client) Address() string {
 	return c.addr
 }
 
-// SystemConfig is the system configuration.
-type SystemConfig struct {
+// SystemDefaults is the system defaults.
+type SystemDefaults struct {
 	DefaultFieldMask *FieldMask `json:"defaultFieldMask,omitempty"`
 	ForcedFieldMask  *FieldMask `json:"forcedFieldMask,omitempty"`
 }
 
-// SystemConfig returns the system configuration.
-func (c *Client) SystemConfig() (SystemConfig, error) {
-	var cfg SystemConfig
+// SystemDefaults returns the system defaults.
+func (c *Client) SystemDefaults() (SystemDefaults, error) {
+	var cfg SystemDefaults
 	err := c.get("/system", &cfg)
 	return cfg, err
 }
