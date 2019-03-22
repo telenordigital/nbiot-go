@@ -53,6 +53,16 @@ func (c *Client) UpdateTeam(team Team) (Team, error) {
 	return team, err
 }
 
+// UpdateTeamMemberRole updates the role of a team member.
+func (c *Client) UpdateTeamMemberRole(teamID, userID, role string) error {
+	return c.update(fmt.Sprintf("/teams/%s/members/%s", teamID, userID), Member{Role: &role})
+}
+
+// DeleteTeamMember deletes a team member.
+func (c *Client) DeleteTeamMember(teamID, userID string) error {
+	return c.delete(fmt.Sprintf("/teams/%s/members/%s", teamID, userID))
+}
+
 // DeleteTeamTag deletes a tag from a team.
 func (c *Client) DeleteTeamTag(id, name string) error {
 	return c.delete(fmt.Sprintf("/teams/%s/tags/%s", id, name))
