@@ -2,11 +2,17 @@ package nbiot
 
 import "fmt"
 
-// Output represents a data output for a collection
+// Output represents a data output for a collection.
+// WebHookOutput, MQTTOutput, IFTTTOutput, and UDPOutput implement this interface.
 type Output interface {
+	GetID() string
+	GetCollectionID() string
+	GetTags() map[string]string
+
 	toOutput() output
 }
 
+// WebHookOutput describes a webhook output.
 type WebHookOutput struct {
 	ID                string
 	CollectionID      string
@@ -15,8 +21,10 @@ type WebHookOutput struct {
 	BasicAuthPass     string
 	CustomHeaderName  string
 	CustomHeaderValue string
+	Tags              map[string]string
 }
 
+// MQTTOutput describes an MQTT output.
 type MQTTOutput struct {
 	ID               string
 	CollectionID     string
@@ -26,21 +34,26 @@ type MQTTOutput struct {
 	Password         string
 	ClientID         string
 	TopicName        string
+	Tags             map[string]string
 }
 
+// IFTTTOutput describes an IFTTT output.
 type IFTTTOutput struct {
 	ID           string
 	CollectionID string
 	Key          string
 	EventName    string
 	AsIsPayload  bool
+	Tags         map[string]string
 }
 
+// UDPOutput describes a UDP output.
 type UDPOutput struct {
 	ID           string
 	CollectionID string
 	Host         string
 	Port         int
+	Tags         map[string]string
 }
 
 // Output retrieves an output
@@ -98,6 +111,42 @@ func (c *Client) DeleteOutput(collectionID, outputID string) error {
 	return c.delete(fmt.Sprintf("/collections/%s/outputs/%s", collectionID, outputID))
 }
 
+// GetID returns the output ID.
+func (o WebHookOutput) GetID() string { return o.ID }
+
+// GetID returns the output ID.
+func (o MQTTOutput) GetID() string { return o.ID }
+
+// GetID returns the output ID.
+func (o IFTTTOutput) GetID() string { return o.ID }
+
+// GetID returns the output ID.
+func (o UDPOutput) GetID() string { return o.ID }
+
+// GetCollectionID returns the collection ID.
+func (o WebHookOutput) GetCollectionID() string { return o.CollectionID }
+
+// GetCollectionID returns the collection ID.
+func (o MQTTOutput) GetCollectionID() string { return o.CollectionID }
+
+// GetCollectionID returns the collection ID.
+func (o IFTTTOutput) GetCollectionID() string { return o.CollectionID }
+
+// GetCollectionID returns the collection ID.
+func (o UDPOutput) GetCollectionID() string { return o.CollectionID }
+
+// GetTags returns the output's tags.
+func (o WebHookOutput) GetTags() map[string]string { return o.Tags }
+
+// GetTags returns the output's tags.
+func (o MQTTOutput) GetTags() map[string]string { return o.Tags }
+
+// GetTags returns the output's tags.
+func (o IFTTTOutput) GetTags() map[string]string { return o.Tags }
+
+// GetTags returns the output's tags.
+func (o UDPOutput) GetTags() map[string]string { return o.Tags }
+
 func (o WebHookOutput) toOutput() output {
 	typ := "webhook"
 	return output{
@@ -111,6 +160,7 @@ func (o WebHookOutput) toOutput() output {
 			"customHeaderName":  o.CustomHeaderName,
 			"customHeaderValue": o.CustomHeaderValue,
 		},
+		Tags: o.Tags,
 	}
 }
 
@@ -128,6 +178,7 @@ func (o MQTTOutput) toOutput() output {
 			"clientId":         o.ClientID,
 			"topicName":        o.TopicName,
 		},
+		Tags: o.Tags,
 	}
 }
 
@@ -142,6 +193,7 @@ func (o IFTTTOutput) toOutput() output {
 			"eventName":   o.EventName,
 			"asIsPayload": o.AsIsPayload,
 		},
+		Tags: o.Tags,
 	}
 }
 
@@ -155,6 +207,7 @@ func (o UDPOutput) toOutput() output {
 			"host": o.Host,
 			"port": o.Port,
 		},
+		Tags: o.Tags,
 	}
 }
 
@@ -163,6 +216,7 @@ type output struct {
 	CollectionID *string                `json:"collectionId"`
 	Type         *string                `json:"type"`
 	Config       map[string]interface{} `json:"config"`
+	Tags         map[string]string      `json:"tags,omitempty"`
 }
 
 func (o *output) toOutput() (Output, error) {
@@ -176,6 +230,7 @@ func (o *output) toOutput() (Output, error) {
 			BasicAuthPass:     o.str("basicAuthPass"),
 			CustomHeaderName:  o.str("customHeaderName"),
 			CustomHeaderValue: o.str("customHeaderValue"),
+			Tags:              o.Tags,
 		}, nil
 	case "mqtt":
 		return MQTTOutput{
@@ -187,6 +242,7 @@ func (o *output) toOutput() (Output, error) {
 			Password:         o.str("password"),
 			ClientID:         o.str("clientId"),
 			TopicName:        o.str("topicName"),
+			Tags:             o.Tags,
 		}, nil
 	case "ifttt":
 		return IFTTTOutput{
@@ -195,6 +251,7 @@ func (o *output) toOutput() (Output, error) {
 			Key:          o.str("key"),
 			EventName:    o.str("eventName"),
 			AsIsPayload:  o.bool("asIsPayload"),
+			Tags:         o.Tags,
 		}, nil
 	case "udp":
 		return UDPOutput{
@@ -202,6 +259,7 @@ func (o *output) toOutput() (Output, error) {
 			CollectionID: *o.CollectionID,
 			Host:         o.str("host"),
 			Port:         o.int("port"),
+			Tags:         o.Tags,
 		}, nil
 	}
 	return nil, fmt.Errorf("unknown output type %q", *o.Type)
