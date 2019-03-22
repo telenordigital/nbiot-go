@@ -1,5 +1,7 @@
 package nbiot
 
+import "fmt"
+
 // Team represents a team.
 type Team struct {
 	TeamID  string            `json:"teamId"`
@@ -44,10 +46,16 @@ func (c *Client) CreateTeam(team Team) (Team, error) {
 	return team, err
 }
 
-// UpdateTeam updates a team.
+// UpdateTeam updates a team, but not its members.
+// No tags are deleted, only added or updated.
 func (c *Client) UpdateTeam(team Team) (Team, error) {
 	err := c.update("/teams/"+team.TeamID, &team)
 	return team, err
+}
+
+// DeleteTeamTag deletes a tag from a team.
+func (c *Client) DeleteTeamTag(id, name string) error {
+	return c.delete(fmt.Sprintf("/teams/%s/tags/%s", id, name))
 }
 
 // DeleteTeam deletes a team.

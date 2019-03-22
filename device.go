@@ -34,9 +34,15 @@ func (c *Client) CreateDevice(collectionID string, device Device) (Device, error
 }
 
 // UpdateDevice updates a device.
+// No tags are deleted, only added or updated.
 func (c *Client) UpdateDevice(collectionID string, device Device) (Device, error) {
 	err := c.update(fmt.Sprintf("/collections/%s/devices/%s", collectionID, *device.DeviceID), &device)
 	return device, err
+}
+
+// DeleteDeviceTag deletes a tag from a device.
+func (c *Client) DeleteDeviceTag(collectionID, deviceID, name string) error {
+	return c.delete(fmt.Sprintf("/collections/%s/devices/%s/tags/%s", collectionID, deviceID, name))
 }
 
 // DeleteDevice deletes a device.

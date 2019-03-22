@@ -52,9 +52,15 @@ func (c *Client) CreateCollection(collection Collection) (Collection, error) {
 }
 
 // UpdateCollection updates a collection.
+// No tags are deleted, only added or updated.
 func (c *Client) UpdateCollection(collection Collection) (Collection, error) {
 	err := c.update("/collections/"+collection.CollectionID, &collection)
 	return collection, err
+}
+
+// DeleteCollectionTag deletes a tag from a collection.
+func (c *Client) DeleteCollectionTag(id, name string) error {
+	return c.delete(fmt.Sprintf("/collections/%s/tags/%s", id, name))
 }
 
 // DeleteCollection deletes a collection.

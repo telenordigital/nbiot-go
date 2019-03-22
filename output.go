@@ -102,6 +102,7 @@ func (c *Client) CreateOutput(collectionID string, output Output) (Output, error
 }
 
 // UpdateOutput updates an output. The type field can't be modified
+// No tags are deleted, only added or updated.
 func (c *Client) UpdateOutput(collectionID string, output Output) (Output, error) {
 	o := output.toOutput()
 	err := c.update(fmt.Sprintf("/collections/%s/outputs/%s", collectionID, *o.ID), &o)
@@ -109,6 +110,11 @@ func (c *Client) UpdateOutput(collectionID string, output Output) (Output, error
 		return nil, err
 	}
 	return o.toOutput()
+}
+
+// DeleteOutputTag deletes a tag from an output.
+func (c *Client) DeleteOutputTag(collectionID, outputID, name string) error {
+	return c.delete(fmt.Sprintf("/collections/%s/outputs/%s/tags/%s", collectionID, outputID, name))
 }
 
 // DeleteOutput removes an output

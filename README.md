@@ -31,6 +31,10 @@ the configuration file can be ignored.
 Use the `NewWithAddr` function to bypass the default configuration file and
 environment variables when you want to configure the client programmatically.
 
+## Updating resources
+
+The various `Client.Update*` methods work via HTTP PATCH, which means they will only modify or set fields, not delete them.  There are special `Client.Delete*Tag` methods for deleting tags.
+
 ## Example
 
 ```go
