@@ -9,7 +9,16 @@ import (
 type Collection struct {
 	CollectionID string            `json:"collectionId"`
 	TeamID       *string           `json:"teamId"`
+	FieldMask    *FieldMask        `json:"fieldMask,omitempty"`
 	Tags         map[string]string `json:"tags,omitempty"`
+}
+
+// FieldMask indicates which fields will be masked from API responses.
+type FieldMask struct {
+	IMSI     *bool `json:"imsi"`
+	IMEI     *bool `json:"imei"`
+	Location *bool `json:"location"`
+	MSISDN   *bool `json:"msisdn"`
 }
 
 // Datapoint represents a data point in a collection

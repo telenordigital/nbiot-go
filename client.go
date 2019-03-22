@@ -54,6 +54,19 @@ func (c *Client) Address() string {
 	return c.addr
 }
 
+// SystemConfig is the system configuration.
+type SystemConfig struct {
+	DefaultFieldMask *FieldMask `json:"defaultFieldMask,omitempty"`
+	ForcedFieldMask  *FieldMask `json:"forcedFieldMask,omitempty"`
+}
+
+// SystemConfig returns the system configuration.
+func (c *Client) SystemConfig() (SystemConfig, error) {
+	var cfg SystemConfig
+	err := c.get("/system", &cfg)
+	return cfg, err
+}
+
 func (c *Client) ping() error {
 	err := c.get("/", nil)
 	if err, ok := err.(ClientError); ok && err.HTTPStatusCode == http.StatusForbidden {
