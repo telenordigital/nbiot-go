@@ -47,6 +47,33 @@ func TestTeam(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if ivs, err := client.Invites(team.TeamID); err != nil {
+		t.Fatal(err)
+	} else if len(ivs) > 0 {
+		t.Fatal(ivs)
+	}
+
+	iv, err := client.CreateInvite(team.TeamID)
+	if err != nil {
+		t.Fatal(err)
+	} else if iv.Code == "" {
+		t.Fatal(iv)
+	}
+
+	if ivs, err := client.Invites(team.TeamID); err != nil {
+		t.Fatal(err)
+	} else if len(ivs) != 1 || ivs[0] != iv {
+		t.Fatal(ivs)
+	}
+
+	if err := client.AcceptInvite(iv.Code); err == nil {
+		t.Fatal(err)
+	}
+
+	if err := client.DeleteInvite(team.TeamID, iv.Code); err != nil {
+		t.Fatal(err)
+	}
+
 	if err := client.DeleteTeam(team.TeamID); err != nil {
 		t.Fatal(err)
 	}

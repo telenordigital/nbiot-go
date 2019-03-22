@@ -72,3 +72,42 @@ func (c *Client) DeleteTeamTag(id, name string) error {
 func (c *Client) DeleteTeam(id string) error {
 	return c.delete("/teams/" + id)
 }
+
+// Invite is an invitation to a team.
+type Invite struct {
+	Code      string `json:"code"`
+	CreatedAt int    `json:"createdAt"` // time stamp (in ms)
+}
+
+// Invite gets an invite.
+func (c *Client) Invite(teamID, code string) (Invite, error) {
+	var invite Invite
+	err := c.get(fmt.Sprintf("/teams/%s/invites/%s", teamID, code), &invite)
+	return invite, err
+}
+
+// Invites gets all invites for the team.
+func (c *Client) Invites(teamID string) ([]Invite, error) {
+	var invites struct {
+		Invites []Invite `json:"invites"`
+	}
+	err := c.get(fmt.Sprintf("/teams/%s/invites", teamID), &invites)
+	return invites.Invites, err
+}
+
+// CreateInvite creates a invite.
+func (c *Client) CreateInvite(teamID string) (Invite, error) {
+	var invite Invite
+	err := c.create(fmt.Sprintf("/teams/%s/invites", teamID), &invite)
+	return invite, err
+}
+
+// AcceptInvite accepts a invite.
+func (c *Client) AcceptInvite(code string) error {
+	return c.create("/teams/accept", &Invite{Code: code})
+}
+
+// DeleteInvite deletes an invite.
+func (c *Client) DeleteInvite(teamID, code string) error {
+	return c.delete(fmt.Sprintf("/teams/%s/invites/%s", teamID, code))
+}
