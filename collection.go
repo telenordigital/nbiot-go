@@ -68,22 +68,19 @@ func (c *Client) DeleteCollection(id string) error {
 	return c.delete("/collections/" + id)
 }
 
-// Data returns all the stored data for the collection
-func (c *Client) Data(collectionID string, since time.Time, until time.Time, limit int) ([]Datapoint, error) {
-	var data struct {
-		Datapoints []Datapoint `json:"messages"`
-	}
-
+// CollectionData returns all the stored data for the collection.
+func (c *Client) CollectionData(collectionID string, since time.Time, until time.Time, limit int) ([]Datapoint, error) {
 	var s, u int64
-
 	if !since.IsZero() {
 		s = since.UnixNano() / int64(time.Millisecond)
 	}
-
 	if !until.IsZero() {
 		u = until.UnixNano() / int64(time.Millisecond)
 	}
 
+	var data struct {
+		Datapoints []Datapoint `json:"messages"`
+	}
 	err := c.get(fmt.Sprintf("/collections/%s/data?since=%d&until=%d&limit=%d", collectionID, s, u, limit), &data)
 	return data.Datapoints, err
 }

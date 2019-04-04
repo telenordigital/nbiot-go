@@ -1,6 +1,9 @@
 package nbiot
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // Device represents a device.
 type Device struct {
@@ -48,4 +51,21 @@ func (c *Client) DeleteDeviceTag(collectionID, deviceID, name string) error {
 // DeleteDevice deletes a device.
 func (c *Client) DeleteDevice(collectionID, deviceID string) error {
 	return c.delete(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID))
+}
+
+// DeviceData returns all the stored data for the device.
+func (c *Client) DeviceData(collectionID, deviceID string, since time.Time, until time.Time, limit int) ([]Datapoint, error) {
+	var s, u int64
+	if !since.IsZero() {
+		s = since.UnixNano() / int64(time.Millisecond)
+	}
+	if !until.IsZero() {
+		u = until.UnixNano() / int64(time.Millisecond)
+	}
+
+	var data struct {
+		Datapoints []Datapoint `json:"messages"`
+	}
+	err := c.get(fmt.Sprintf("/collections/%s/devices/%s/data?since=%d&until=%d&limit=%d", collectionID, deviceID, s, u, limit), &data)
+	return data.Datapoints, err
 }

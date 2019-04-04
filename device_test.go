@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestDevice(t *testing.T) {
@@ -71,6 +72,11 @@ func TestDevice(t *testing.T) {
 
 	if _, err := client.Device(collection.CollectionID, *device.DeviceID); err != nil {
 		t.Fatal(err)
+	}
+
+	data, err := client.DeviceData(collection.CollectionID, *devices[0].DeviceID, time.Time{}, time.Time{}, 0)
+	if err != nil || len(data) != 0 {
+		t.Fatal(err, data)
 	}
 
 	if err := client.DeleteDevice(collection.CollectionID, *device.DeviceID); err != nil {
