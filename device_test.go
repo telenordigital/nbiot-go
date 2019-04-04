@@ -18,7 +18,11 @@ func TestDevice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteCollection(collection.CollectionID)
+	defer func() {
+		if err := client.DeleteCollection(collection.CollectionID); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	devices, err := client.Devices(collection.CollectionID)
 	if err != nil {

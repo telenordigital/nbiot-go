@@ -112,6 +112,36 @@ func (c *Client) UpdateOutput(collectionID string, output Output) (Output, error
 	return o.toOutput()
 }
 
+// OutputLogEntry is an entry in an output log.
+type OutputLogEntry struct {
+	Message  string `json:"message"`   // The message itself
+	Received int64  `json:"timestamp"` // Time in ms
+	Repeated uint8  `json:"repeated"`  // Repeat count
+}
+
+// OutputLogs returns the logs for an output.
+func (c *Client) OutputLogs(collectionID, outputID string) ([]OutputLogEntry, error) {
+	var log struct {
+		Logs []OutputLogEntry `json:"logs"`
+	}
+	err := c.get(fmt.Sprintf("/collections/%s/outputs/%s/logs", collectionID, outputID), &log)
+	return log.Logs, err
+}
+
+// OutputStatus is the status of an output.
+type OutputStatus struct {
+	ErrorCount  int `json:"errorCount"`
+	Forwarded   int `json:"forwarded"`
+	Received    int `json:"received"`
+	Retransmits int `json:"retries"`
+}
+
+// OutputStatus returns the status for an output.
+func (c *Client) OutputStatus(collectionID, outputID string) (stat OutputStatus, err error) {
+	err = c.get(fmt.Sprintf("/collections/%s/outputs/%s/status", collectionID, outputID), &stat)
+	return stat, err
+}
+
 // DeleteOutputTag deletes a tag from an output.
 func (c *Client) DeleteOutputTag(collectionID, outputID, name string) error {
 	return c.delete(fmt.Sprintf("/collections/%s/outputs/%s/tags/%s", collectionID, outputID, name))
