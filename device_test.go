@@ -1,7 +1,9 @@
 package nbiot
 
 import (
+	"math/rand"
 	"net/http"
+	"strconv"
 	"testing"
 )
 
@@ -26,8 +28,8 @@ func TestDevice(t *testing.T) {
 	}
 
 	device, err := client.CreateDevice(collection.CollectionID, Device{
-		IMEI: str("12"),
-		IMSI: str("34"),
+		IMSI: str(strconv.Itoa(rand.Intn(1e15))),
+		IMEI: str(strconv.Itoa(rand.Intn(1e15))),
 	})
 	if err != nil {
 		t.Fatal(err)
