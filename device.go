@@ -7,10 +7,10 @@ import (
 
 // Device represents a device.
 type Device struct {
-	ID           *string           `json:"deviceId"`
-	CollectionID *string           `json:"collectionId,omitempty"`
-	IMEI         *string           `json:"imei"`
-	IMSI         *string           `json:"imsi"`
+	ID           string            `json:"deviceId"`
+	CollectionID string            `json:"collectionId,omitempty"`
+	IMEI         string            `json:"imei,omitempty"`
+	IMSI         string            `json:"imsi,omitempty"`
 	Tags         map[string]string `json:"tags,omitempty"`
 }
 
@@ -39,7 +39,7 @@ func (c *Client) CreateDevice(collectionID string, device Device) (Device, error
 // UpdateDevice updates a device.
 // No tags are deleted, only added or updated.
 func (c *Client) UpdateDevice(collectionID string, device Device) (Device, error) {
-	err := c.update(fmt.Sprintf("/collections/%s/devices/%s", collectionID, *device.ID), &device)
+	err := c.update(fmt.Sprintf("/collections/%s/devices/%s", collectionID, device.ID), &device)
 	return device, err
 }
 

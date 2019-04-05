@@ -8,7 +8,7 @@ import (
 // Collection represents a collection.
 type Collection struct {
 	ID        string            `json:"collectionId"`
-	TeamID    *string           `json:"teamId"`
+	TeamID    string            `json:"teamId,omitempty"`
 	FieldMask *FieldMask        `json:"fieldMask,omitempty"`
 	Tags      map[string]string `json:"tags,omitempty"`
 }

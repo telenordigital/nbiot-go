@@ -22,17 +22,17 @@ func TestDownstream(t *testing.T) {
 	var devices []Device
 	for i := 0; i < 5; i++ {
 		d, err := client.CreateDevice(collection.ID, Device{
-			IMSI: str(strconv.Itoa(rand.Intn(1e15))),
-			IMEI: str(strconv.Itoa(rand.Intn(1e15))),
+			IMSI: strconv.Itoa(rand.Intn(1e15)),
+			IMEI: strconv.Itoa(rand.Intn(1e15)),
 		})
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer client.DeleteDevice(collection.ID, *d.ID)
+		defer client.DeleteDevice(collection.ID, d.ID)
 		devices = append(devices, d)
 	}
 
-	err = client.Send(collection.ID, *devices[0].ID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
+	err = client.Send(collection.ID, devices[0].ID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}

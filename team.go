@@ -12,19 +12,19 @@ type Team struct {
 	Tags    map[string]string `json:"tags,omitempty"`
 }
 
-// Member is the member element of the Team type
+// Member is a member of a team.
 type Member struct {
-	UserID        *string `json:"userId"`
-	Role          *string `json:"role"`
-	Name          *string `json:"name"`
-	Email         *string `json:"email"`
-	Phone         *string `json:"phone"`
-	VerifiedEmail *bool   `json:"verifiedEmail"`
-	VerifiedPhone *bool   `json:"verifiedPhone"`
-	ConnectID     *string `json:"connectId"`
-	GitHubLogin   *string `json:"gitHubLogin"`
-	AuthType      *string `json:"authType"`
-	AvatarURL     *string `json:"avatarUrl"`
+	UserID        string `json:"userId"`
+	Role          string `json:"role"`
+	Name          string `json:"name,omitempty"`
+	Email         string `json:"email,omitempty"`
+	Phone         string `json:"phone,omitempty"`
+	VerifiedEmail bool   `json:"verifiedEmail"`
+	VerifiedPhone bool   `json:"verifiedPhone"`
+	ConnectID     string `json:"connectId,omitempty"`
+	GitHubLogin   string `json:"gitHubLogin,omitempty"`
+	AuthType      string `json:"authType,omitempty"`
+	AvatarURL     string `json:"avatarUrl,omitempty"`
 }
 
 // Team gets a team.
@@ -58,7 +58,7 @@ func (c *Client) UpdateTeam(team Team) (Team, error) {
 
 // UpdateTeamMemberRole updates the role of a team member.
 func (c *Client) UpdateTeamMemberRole(teamID, userID, role string) (Member, error) {
-	m := Member{Role: &role}
+	m := Member{Role: role}
 	err := c.update(fmt.Sprintf("/teams/%s/members/%s", teamID, userID), &m)
 	return m, err
 }

@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func TestDevice(t *testing.T) {
 	client, err := New()
 	if err != nil {
@@ -33,21 +37,21 @@ func TestDevice(t *testing.T) {
 	}
 
 	device, err := client.CreateDevice(collection.ID, Device{
-		IMSI: str(strconv.Itoa(rand.Intn(1e15))),
-		IMEI: str(strconv.Itoa(rand.Intn(1e15))),
+		IMSI: strconv.Itoa(rand.Intn(1e15)),
+		IMEI: strconv.Itoa(rand.Intn(1e15)),
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteDevice(collection.ID, *device.ID)
+	defer client.DeleteDevice(collection.ID, device.ID)
 
 	tagKey := "test key"
 	tagValue := "test value"
-	imei := "56"
-	imsi := "78"
+	imei := strconv.Itoa(rand.Intn(1e15))
+	imsi := strconv.Itoa(rand.Intn(1e15))
 	device.Tags = map[string]string{tagKey: tagValue}
-	device.IMEI = &imei
-	device.IMSI = &imsi
+	device.IMEI = imei
+	device.IMSI = imsi
 	device, err = client.UpdateDevice(collection.ID, device)
 	if err != nil {
 		t.Fatal(err)
@@ -55,7 +59,7 @@ func TestDevice(t *testing.T) {
 	if len(device.Tags) != 1 || device.Tags[tagKey] != tagValue {
 		t.Fatal("unexpected tags:", device.Tags)
 	}
-	if device.IMEI == nil || device.IMSI == nil || *device.IMEI != imei || *device.IMSI != imsi {
+	if device.IMEI != imei || device.IMSI != imsi {
 		t.Fatal("unexpected IMEI or IMSI:", device.IMEI, device.IMSI)
 	}
 
@@ -65,7 +69,7 @@ func TestDevice(t *testing.T) {
 	}
 	found := false
 	for _, d := range devices {
-		if *d.ID == *device.ID {
+		if d.ID == device.ID {
 			found = true
 			break
 		}
@@ -74,22 +78,20 @@ func TestDevice(t *testing.T) {
 		t.Fatalf("device %v not found in %v", device, devices)
 	}
 
-	if _, err := client.Device(collection.ID, *device.ID); err != nil {
+	if _, err := client.Device(collection.ID, device.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	data, err := client.DeviceData(collection.ID, *devices[0].ID, time.Time{}, time.Time{}, 0)
+	data, err := client.DeviceData(collection.ID, devices[0].ID, time.Time{}, time.Time{}, 0)
 	if err != nil || len(data) != 0 {
 		t.Fatal(err, data)
 	}
 
-	if err := client.DeleteDevice(collection.ID, *device.ID); err != nil {
+	if err := client.DeleteDevice(collection.ID, device.ID); err != nil {
 		t.Fatal(err)
 	}
-	err = client.DeleteDevice(collection.ID, *device.ID)
+	err = client.DeleteDevice(collection.ID, device.ID)
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}
 }
-
-func str(s string) *string { return &s }
