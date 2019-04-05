@@ -21,14 +21,6 @@ type FieldMask struct {
 	MSISDN   *bool `json:"msisdn"`
 }
 
-// Datapoint represents a data point in a collection
-type Datapoint struct {
-	Type     string `json:"type"`
-	Device   Device `json:"device"`
-	Payload  []byte `json:"payload"`
-	Received int64  `json:"received"`
-}
-
 // Collection gets a collection.
 func (c *Client) Collection(id string) (Collection, error) {
 	var collection Collection
@@ -69,7 +61,7 @@ func (c *Client) DeleteCollection(id string) error {
 }
 
 // CollectionData returns all the stored data for the collection.
-func (c *Client) CollectionData(collectionID string, since time.Time, until time.Time, limit int) ([]Datapoint, error) {
+func (c *Client) CollectionData(collectionID string, since time.Time, until time.Time, limit int) ([]OutputDataMessage, error) {
 	var s, u int64
 	if !since.IsZero() {
 		s = since.UnixNano() / int64(time.Millisecond)
@@ -79,8 +71,8 @@ func (c *Client) CollectionData(collectionID string, since time.Time, until time
 	}
 
 	var data struct {
-		Datapoints []Datapoint `json:"messages"`
+		Messages []OutputDataMessage `json:"messages"`
 	}
 	err := c.get(fmt.Sprintf("/collections/%s/data?since=%d&until=%d&limit=%d", collectionID, s, u, limit), &data)
-	return data.Datapoints, err
+	return data.Messages, err
 }

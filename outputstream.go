@@ -8,20 +8,24 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// OutputStream provides a stream of OutputDataMessages.
 type OutputStream struct {
 	ws *websocket.Conn
 }
 
+// OutputDataMessage represents a message sent by a device.
 type OutputDataMessage struct {
 	Device   Device `json:"device"`
 	Payload  []byte `json:"payload"`
 	Received int64  `json:"received"`
 }
 
+// CollectionOutputStream streams messages from all devices in a collection.
 func (c *Client) CollectionOutputStream(collectionID string) (*OutputStream, error) {
 	return c.outputStream(fmt.Sprintf("/collections/%s", collectionID))
 }
 
+// DeviceOutputStream streams messages from one device.
 func (c *Client) DeviceOutputStream(collectionID, deviceID string) (*OutputStream, error) {
 	return c.outputStream(fmt.Sprintf("/collections/%s/devices/%s", collectionID, deviceID))
 }
@@ -51,6 +55,8 @@ func (c *Client) outputStream(path string) (*OutputStream, error) {
 	return &OutputStream{ws}, nil
 }
 
+// Recv blocks until a new message is received.
+// It returns io.EOF if the stream is closed by the server.
 func (s *OutputStream) Recv() (OutputDataMessage, error) {
 	for {
 		var msg struct {
@@ -68,6 +74,7 @@ func (s *OutputStream) Recv() (OutputDataMessage, error) {
 	}
 }
 
+// Close closes the output stream.
 func (s *OutputStream) Close() {
 	s.ws.Close()
 }
