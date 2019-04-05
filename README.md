@@ -62,11 +62,9 @@ func main() {
 		log.Fatal("Error creating collection: ", err)
 	}
 
-	imsi := "0345892703458"
-	imei := "1487252347803"
-	device, err := client.CreateDevice(collection.CollectionID, nbiot.Device{
-		IMSI: &imei,
-		IMEI: &imsi,
+	device, err := client.CreateDevice(collection.ID, nbiot.Device{
+		IMSI: "0345892703458",
+		IMEI: "1487252347803",
 		Tags: map[string]string{
 			"name": "example device",
 		},
@@ -75,7 +73,7 @@ func main() {
 		log.Fatal("Error creating device: ", err)
 	}
 
-	stream, err := client.DeviceOutputStream(collection.CollectionID, *device.ID)
+	stream, err := client.DeviceOutputStream(collection.ID, device.ID)
 	if err != nil {
 		log.Fatal("Error creating stream: ", err)
 	}
