@@ -1,6 +1,9 @@
 package nbiot
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
 // Team represents a team.
 type Team struct {
@@ -54,8 +57,10 @@ func (c *Client) UpdateTeam(team Team) (Team, error) {
 }
 
 // UpdateTeamMemberRole updates the role of a team member.
-func (c *Client) UpdateTeamMemberRole(teamID, userID, role string) error {
-	return c.update(fmt.Sprintf("/teams/%s/members/%s", teamID, userID), Member{Role: &role})
+func (c *Client) UpdateTeamMemberRole(teamID, userID, role string) (Member, error) {
+	m := Member{Role: &role}
+	err := c.update(fmt.Sprintf("/teams/%s/members/%s", teamID, userID), &m)
+	return m, err
 }
 
 // DeleteTeamMember deletes a team member.
@@ -103,8 +108,9 @@ func (c *Client) CreateInvite(teamID string) (Invite, error) {
 }
 
 // AcceptInvite accepts a invite.
-func (c *Client) AcceptInvite(code string) error {
-	return c.create("/teams/accept", &Invite{Code: code})
+func (c *Client) AcceptInvite(code string) (t Team, err error) {
+	err = c.request(http.MethodPost, "/teams/accept", &Invite{Code: code}, &t)
+	return t, err
 }
 
 // DeleteInvite deletes an invite.

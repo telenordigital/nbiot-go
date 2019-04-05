@@ -59,6 +59,7 @@ func TestTeam(t *testing.T) {
 	} else if iv.Code == "" {
 		t.Fatal(iv)
 	}
+	defer client.DeleteInvite(team.TeamID, iv.Code)
 
 	if ivs, err := client.Invites(team.TeamID); err != nil {
 		t.Fatal(err)
@@ -66,7 +67,8 @@ func TestTeam(t *testing.T) {
 		t.Fatal(ivs)
 	}
 
-	if err := client.AcceptInvite(iv.Code); err == nil {
+	_, err = client.AcceptInvite(iv.Code)
+	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusConflict {
 		t.Fatal(err)
 	}
 
