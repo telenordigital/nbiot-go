@@ -15,7 +15,7 @@ func TestTeam(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteTeam(team.TeamID)
+	defer client.DeleteTeam(team.ID)
 
 	tagKey := "test key"
 	tagValue := "test value"
@@ -34,7 +34,7 @@ func TestTeam(t *testing.T) {
 	}
 	found := false
 	for _, t := range teams {
-		if t.TeamID == team.TeamID {
+		if t.ID == team.ID {
 			found = true
 			break
 		}
@@ -43,25 +43,25 @@ func TestTeam(t *testing.T) {
 		t.Fatalf("team %v not found in %v", team, teams)
 	}
 
-	if _, err := client.Team(team.TeamID); err != nil {
+	if _, err := client.Team(team.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	if ivs, err := client.Invites(team.TeamID); err != nil {
+	if ivs, err := client.Invites(team.ID); err != nil {
 		t.Fatal(err)
 	} else if len(ivs) > 0 {
 		t.Fatal(ivs)
 	}
 
-	iv, err := client.CreateInvite(team.TeamID)
+	iv, err := client.CreateInvite(team.ID)
 	if err != nil {
 		t.Fatal(err)
 	} else if iv.Code == "" {
 		t.Fatal(iv)
 	}
-	defer client.DeleteInvite(team.TeamID, iv.Code)
+	defer client.DeleteInvite(team.ID, iv.Code)
 
-	if ivs, err := client.Invites(team.TeamID); err != nil {
+	if ivs, err := client.Invites(team.ID); err != nil {
 		t.Fatal(err)
 	} else if len(ivs) != 1 || ivs[0] != iv {
 		t.Fatal(ivs)
@@ -72,14 +72,14 @@ func TestTeam(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := client.DeleteInvite(team.TeamID, iv.Code); err != nil {
+	if err := client.DeleteInvite(team.ID, iv.Code); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := client.DeleteTeam(team.TeamID); err != nil {
+	if err := client.DeleteTeam(team.ID); err != nil {
 		t.Fatal(err)
 	}
-	err = client.DeleteTeam(team.TeamID)
+	err = client.DeleteTeam(team.ID)
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}

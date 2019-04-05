@@ -7,7 +7,7 @@ import (
 
 // Team represents a team.
 type Team struct {
-	TeamID  string            `json:"teamId"`
+	ID      string            `json:"teamId"`
 	Members []Member          `json:"members,omitempty"`
 	Tags    map[string]string `json:"tags,omitempty"`
 }
@@ -52,7 +52,7 @@ func (c *Client) CreateTeam(team Team) (Team, error) {
 // UpdateTeam updates a team, but not its members.
 // No tags are deleted, only added or updated.
 func (c *Client) UpdateTeam(team Team) (Team, error) {
-	err := c.update("/teams/"+team.TeamID, &team)
+	err := c.update("/teams/"+team.ID, &team)
 	return team, err
 }
 

@@ -15,9 +15,9 @@ func TestCollectionOutputStream(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteCollection(collection.CollectionID)
+	defer client.DeleteCollection(collection.ID)
 
-	stream, err := client.CollectionOutputStream(collection.CollectionID)
+	stream, err := client.CollectionOutputStream(collection.ID)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -17,22 +17,22 @@ func TestDownstream(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteCollection(collection.CollectionID)
+	defer client.DeleteCollection(collection.ID)
 
 	var devices []Device
 	for i := 0; i < 5; i++ {
-		d, err := client.CreateDevice(collection.CollectionID, Device{
+		d, err := client.CreateDevice(collection.ID, Device{
 			IMSI: str(strconv.Itoa(rand.Intn(1e15))),
 			IMEI: str(strconv.Itoa(rand.Intn(1e15))),
 		})
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer client.DeleteDevice(collection.CollectionID, *d.DeviceID)
+		defer client.DeleteDevice(collection.ID, *d.ID)
 		devices = append(devices, d)
 	}
 
-	err = client.Send(collection.CollectionID, *devices[0].DeviceID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
+	err = client.Send(collection.ID, *devices[0].ID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func TestDownstream(t *testing.T) {
 		return
 	}
 
-	res, err := client.Broadcast(collection.CollectionID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
+	res, err := client.Broadcast(collection.ID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
 	if err != nil || res.Failed != len(devices) {
 		t.Fatal(err, res)
 	}

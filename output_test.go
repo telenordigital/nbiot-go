@@ -13,26 +13,26 @@ func TestOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := client.DeleteCollection(collection.CollectionID); err != nil {
+		if err := client.DeleteCollection(collection.ID); err != nil {
 			t.Fatal(err)
 		}
 	}()
 
-	output, err := client.CreateOutput(collection.CollectionID, WebHookOutput{URL: DefaultAddr})
+	output, err := client.CreateOutput(collection.ID, WebHookOutput{URL: DefaultAddr})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := client.DeleteOutput(collection.CollectionID, output.GetID()); err != nil {
+		if err := client.DeleteOutput(collection.ID, output.GetID()); err != nil {
 			t.Fatal(err)
 		}
 	}()
 
-	if logs, err := client.OutputLogs(collection.CollectionID, output.GetID()); err != nil || len(logs) != 0 {
+	if logs, err := client.OutputLogs(collection.ID, output.GetID()); err != nil || len(logs) != 0 {
 		t.Fatal(err, logs)
 	}
 
-	if stat, err := client.OutputStatus(collection.CollectionID, output.GetID()); err != nil || (stat != OutputStatus{}) {
+	if stat, err := client.OutputStatus(collection.ID, output.GetID()); err != nil || (stat != OutputStatus{}) {
 		t.Fatal(err, stat)
 	}
 }

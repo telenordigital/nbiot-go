@@ -7,10 +7,10 @@ import (
 
 // Collection represents a collection.
 type Collection struct {
-	CollectionID string            `json:"collectionId"`
-	TeamID       *string           `json:"teamId"`
-	FieldMask    *FieldMask        `json:"fieldMask,omitempty"`
-	Tags         map[string]string `json:"tags,omitempty"`
+	ID        string            `json:"collectionId"`
+	TeamID    *string           `json:"teamId"`
+	FieldMask *FieldMask        `json:"fieldMask,omitempty"`
+	Tags      map[string]string `json:"tags,omitempty"`
 }
 
 // FieldMask indicates which fields will be masked from API responses.
@@ -46,7 +46,7 @@ func (c *Client) CreateCollection(collection Collection) (Collection, error) {
 // UpdateCollection updates a collection.
 // No tags are deleted, only added or updated.
 func (c *Client) UpdateCollection(collection Collection) (Collection, error) {
-	err := c.update("/collections/"+collection.CollectionID, &collection)
+	err := c.update("/collections/"+collection.ID, &collection)
 	return collection, err
 }
 

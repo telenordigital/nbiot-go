@@ -16,7 +16,7 @@ func TestCollection(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteCollection(collection.CollectionID)
+	defer client.DeleteCollection(collection.ID)
 
 	tagKey := "test key"
 	tagValue := "test value"
@@ -35,7 +35,7 @@ func TestCollection(t *testing.T) {
 	}
 	found := false
 	for _, c := range collections {
-		if c.CollectionID == collection.CollectionID {
+		if c.ID == collection.ID {
 			found = true
 			break
 		}
@@ -44,22 +44,22 @@ func TestCollection(t *testing.T) {
 		t.Fatalf("collection %v not found in %v", collection, collections)
 	}
 
-	if _, err := client.Collection(collection.CollectionID); err != nil {
+	if _, err := client.Collection(collection.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	data, err := client.CollectionData(collection.CollectionID, time.Time{}, time.Time{}, 0)
+	data, err := client.CollectionData(collection.ID, time.Time{}, time.Time{}, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(data) != 0 {
-		t.Fatalf("collection %v should be empty, has %d elements", collection.CollectionID, len(data))
+		t.Fatalf("collection %v should be empty, has %d elements", collection.ID, len(data))
 	}
 
-	if err := client.DeleteCollection(collection.CollectionID); err != nil {
+	if err := client.DeleteCollection(collection.ID); err != nil {
 		t.Fatal(err)
 	}
-	err = client.DeleteCollection(collection.CollectionID)
+	err = client.DeleteCollection(collection.ID)
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}

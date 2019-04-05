@@ -75,7 +75,7 @@ func main() {
 		log.Fatal("Error creating device: ", err)
 	}
 
-	stream, err := client.DeviceOutputStream(collection.CollectionID, *device.DeviceID)
+	stream, err := client.DeviceOutputStream(collection.CollectionID, *device.ID)
 	if err != nil {
 		log.Fatal("Error creating stream: ", err)
 	}

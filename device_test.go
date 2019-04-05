@@ -19,12 +19,12 @@ func TestDevice(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := client.DeleteCollection(collection.CollectionID); err != nil {
+		if err := client.DeleteCollection(collection.ID); err != nil {
 			t.Fatal(err)
 		}
 	}()
 
-	devices, err := client.Devices(collection.CollectionID)
+	devices, err := client.Devices(collection.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,14 +32,14 @@ func TestDevice(t *testing.T) {
 		t.Fatalf("expected zero device, got %#v", devices)
 	}
 
-	device, err := client.CreateDevice(collection.CollectionID, Device{
+	device, err := client.CreateDevice(collection.ID, Device{
 		IMSI: str(strconv.Itoa(rand.Intn(1e15))),
 		IMEI: str(strconv.Itoa(rand.Intn(1e15))),
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.DeleteDevice(collection.CollectionID, *device.DeviceID)
+	defer client.DeleteDevice(collection.ID, *device.ID)
 
 	tagKey := "test key"
 	tagValue := "test value"
@@ -48,7 +48,7 @@ func TestDevice(t *testing.T) {
 	device.Tags = map[string]string{tagKey: tagValue}
 	device.IMEI = &imei
 	device.IMSI = &imsi
-	device, err = client.UpdateDevice(collection.CollectionID, device)
+	device, err = client.UpdateDevice(collection.ID, device)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,13 +59,13 @@ func TestDevice(t *testing.T) {
 		t.Fatal("unexpected IMEI or IMSI:", device.IMEI, device.IMSI)
 	}
 
-	devices, err = client.Devices(collection.CollectionID)
+	devices, err = client.Devices(collection.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 	found := false
 	for _, d := range devices {
-		if *d.DeviceID == *device.DeviceID {
+		if *d.ID == *device.ID {
 			found = true
 			break
 		}
@@ -74,19 +74,19 @@ func TestDevice(t *testing.T) {
 		t.Fatalf("device %v not found in %v", device, devices)
 	}
 
-	if _, err := client.Device(collection.CollectionID, *device.DeviceID); err != nil {
+	if _, err := client.Device(collection.ID, *device.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	data, err := client.DeviceData(collection.CollectionID, *devices[0].DeviceID, time.Time{}, time.Time{}, 0)
+	data, err := client.DeviceData(collection.ID, *devices[0].ID, time.Time{}, time.Time{}, 0)
 	if err != nil || len(data) != 0 {
 		t.Fatal(err, data)
 	}
 
-	if err := client.DeleteDevice(collection.CollectionID, *device.DeviceID); err != nil {
+	if err := client.DeleteDevice(collection.ID, *device.ID); err != nil {
 		t.Fatal(err)
 	}
-	err = client.DeleteDevice(collection.CollectionID, *device.DeviceID)
+	err = client.DeleteDevice(collection.ID, *device.ID)
 	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
 		t.Fatal(err)
 	}
