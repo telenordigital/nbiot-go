@@ -12,7 +12,7 @@ type DownstreamMessage struct {
 }
 
 // Send sends a message to a device.
-func (c *Client) Send(deviceID, collectionID string, msg DownstreamMessage) error {
+func (c *Client) Send(collectionID, deviceID string, msg DownstreamMessage) error {
 	return c.request(http.MethodPost, fmt.Sprintf("/collections/%s/devices/%s/to", collectionID, deviceID), msg, nil)
 }
 

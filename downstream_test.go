@@ -33,7 +33,7 @@ func TestDownstream(t *testing.T) {
 	}
 
 	err = client.Send(collection.ID, devices[0].ID, DownstreamMessage{Port: 1234, Payload: []byte("Hello, device!")})
-	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusNotFound {
+	if cerr, ok := err.(ClientError); !ok || cerr.HTTPStatusCode != http.StatusConflict {
 		t.Fatal(err)
 	}
 
