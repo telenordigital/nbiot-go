@@ -114,9 +114,9 @@ func (c *Client) UpdateOutput(collectionID string, output Output) (Output, error
 
 // OutputLogEntry is an entry in an output log.
 type OutputLogEntry struct {
-	Message  string `json:"message"`   // The message itself
-	Received int64  `json:"timestamp"` // Time in ms
-	Repeated uint8  `json:"repeated"`  // Repeat count
+	Message   string `json:"message"`   // The message itself
+	Timestamp int64  `json:"timestamp"` // Time in ms
+	Repeated  uint8  `json:"repeated"`  // Repeat count
 }
 
 // OutputLogs returns the logs for an output.
@@ -130,10 +130,10 @@ func (c *Client) OutputLogs(collectionID, outputID string) ([]OutputLogEntry, er
 
 // OutputStatus is the status of an output.
 type OutputStatus struct {
-	ErrorCount  int `json:"errorCount"`
-	Forwarded   int `json:"forwarded"`
-	Received    int `json:"received"`
-	Retransmits int `json:"retries"`
+	ErrorCount int `json:"errorCount"`
+	Forwarded  int `json:"forwarded"`
+	Received   int `json:"received"`
+	Retries    int `json:"retries"`
 }
 
 // OutputStatus returns the status for an output.
