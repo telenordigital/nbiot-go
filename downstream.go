@@ -7,8 +7,10 @@ import (
 
 // DownstreamMessage is a message to be sent to a device.
 type DownstreamMessage struct {
-	Port    int    `json:"port"`
-	Payload []byte `json:"payload"`
+	Port      int    `json:"port"`
+	Payload   []byte `json:"payload"`
+	Path      string `json:"path,omitempty"`      // This is used by CoAP support to specify the path
+	Transport string `json:"transport,omitempty"` // This is used by CoAP support to specify transport
 }
 
 // Send sends a message to a device.
