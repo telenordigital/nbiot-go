@@ -15,9 +15,18 @@ type OutputStream struct {
 
 // OutputDataMessage represents a message sent by a device.
 type OutputDataMessage struct {
-	Device   Device `json:"device"`
-	Payload  []byte `json:"payload"`
-	Received int64  `json:"received"`
+	Device       Device `json:"device"`
+	Payload      []byte `json:"payload"`
+	Received     int64  `json:"received"`
+	Transport    string `json:"transport"`
+	CoAPMetaData struct {
+		Method string `json:"method"`
+		Path   string `json:"path"`
+	} `json:"coapMetaData"`
+	UDPMetaData struct {
+		LocalPort  int `json:"localPort"`
+		RemotePort int `json:"remotePort"`
+	} `json:"udpMetaData"`
 }
 
 // CollectionOutputStream streams messages from all devices in a collection.
