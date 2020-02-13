@@ -9,7 +9,7 @@ import (
 type DownstreamMessage struct {
 	Port      int    `json:"port"`
 	Payload   []byte `json:"payload"`
-	Path      string `json:"path,omitempty"`      // This is used by CoAP support to specify the path
+	Path      string `json:"coapPath,omitempty"`  // This is used by CoAP support to specify the path
 	Transport string `json:"transport,omitempty"` // This is used by CoAP support to specify transport
 }
 
