@@ -56,9 +56,9 @@ func (c *Client) outputStream(path string) (*OutputStream, error) {
 	header.Add("X-API-Token", c.token)
 
 	dialer := websocket.Dialer{}
-	ws, _, err := dialer.Dial(urlStr, header)
+	ws, resp, err := dialer.Dial(urlStr, header)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("handshake failed with status %d", resp.StatusCode)
 	}
 
 	return &OutputStream{ws}, nil
