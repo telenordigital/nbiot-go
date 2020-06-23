@@ -17,7 +17,7 @@ type OutputStream struct {
 type OutputDataMessage struct {
 	Device       Device `json:"device"`
 	Payload      []byte `json:"payload"`
-	Received     int64  `json:"received"`
+	Received     int64  `json:"received,string"`
 	Transport    string `json:"transport"`
 	CoAPMetaData struct {
 		Method string `json:"method"`

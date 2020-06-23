@@ -5,6 +5,12 @@
 NBIoT-Go provides a Go client for the [REST API](https://api.nbiot.telenor.io) for
 [Telenor NB-IoT](https://nbiot.engineering).
 
+## Important note
+
+Version 2.1.1 of the service at nbiot.engineering introduces a breaking change
+for the go client library. Versions prior to 2.1.1 won't work with v0.6.0 of
+this library.
+
 ## Configuration
 
 The configuration file is usually located at `${HOME}/.telenor-nbiot`,
